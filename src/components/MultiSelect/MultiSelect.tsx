@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CreatableSelect from "react-select/creatable";
 import { OptionProps, components } from "react-select";
 
 import styles from "./MultiSelect.module.scss";
-
-import Sport from "./../../assets/icons/svg/Sport.svg";
-import Art from "./../../assets/icons/svg/Art.svg";
-import Game from "./../../assets/icons/svg/Game.svg";
-import Education from "./../../assets/icons/svg/Education.svg";
-
+import New from "./../../assets/icons/svg/New.svg";
 interface OptionsType {
   value: string;
   label: string;
   icon?: React.ReactNode;
+}
+
+interface MultiSelectPropsType {
+  options: OptionsType[] | [];
+  isLoading: boolean;
+  value: OptionsType[] | [] | null;
+  handleOnCreate: (newOption: string) => void;
+  onChange: (newOption: any) => void;
 }
 
 const CustomOptions = (props: OptionProps<any>) => {
@@ -21,7 +24,7 @@ const CustomOptions = (props: OptionProps<any>) => {
       <span className={styles.optionContainer}>
         {props.data.label}
         <img
-          src={props.data.icon}
+          src={props.data.icon ?? New}
           alt={props.data.label}
           className={styles.categoryIcon}
         />
@@ -30,24 +33,30 @@ const CustomOptions = (props: OptionProps<any>) => {
   );
 };
 
-const MultiSelect = () => {
-  const [options, setOptions] = useState<OptionsType[] | []>([]);
-
-  useEffect(() => {
-    setOptions([
-      { value: "education", label: "Education", icon: Education },
-      { value: "art", label: "Art", icon: Art },
-      { value: "sport", label: `Sport`, icon: Sport },
-      { value: "science", label: "Science", icon: <></> },
-      { value: "game", label: "Game", icon: Game },
-    ]);
-  }, []);
+const MultiSelect: React.FC<MultiSelectPropsType> = (props) => {
+  const { options, isLoading, value, handleOnCreate, onChange } = props;
 
   return (
     <div>
       <CreatableSelect
+        isMulti
+        isClearable
+        isLoading={isLoading}
         components={{ Option: CustomOptions }}
         options={options}
+        onCreateOption={handleOnCreate}
+        value={value}
+        onChange={onChange}
+        theme={(theme) => ({
+          ...theme,
+          borderRadius: 10,
+          minHeight: 60,
+          colors: {
+            ...theme.colors,
+            primary25: "#F2F5FF",
+          },
+        })}
+        className="react-select"
       />
     </div>
   );
